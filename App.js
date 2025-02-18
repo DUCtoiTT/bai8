@@ -14,11 +14,22 @@ import {
 
 export default function App() {
   const [phone, setPhone] = useState('');
+  const [error, setError] = useState('');
 
-  const handleContinue = () => {
-    console.log('Số điện thoại:', phone);
+  const validatePhone = (number) => {
+    const phoneRegex = /^0\d{9}$/; // Số điện thoại Việt Nam hợp lệ (bắt đầu bằng 0, đủ 10 số)
+    return phoneRegex.test(number);
   };
 
+  const handleContinue = () => {
+    if (!validatePhone(phone)) {
+      setError('Số điện thoại không đúng định dạng. Vui lòng nhập lại.');
+      return;
+    }
+    setError('');
+    console.log('Số điện thoại hợp lệ:', phone);
+    // Xử lý tiếp theo sau khi nhập đúng
+  };
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -39,12 +50,16 @@ export default function App() {
               Dùng số điện thoại để đăng nhập hoặc đăng ký tài khoản tại OneHousing Pro
             </Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, error ? styles.inputError : null]}
               placeholder="Nhập số điện thoại của bạn"
               keyboardType="phone-pad"
               value={phone}
-              onChangeText={setPhone}
+              onChangeText={(text) => {
+                setPhone(text);
+                setError(''); // Xóa lỗi khi người dùng nhập lại
+              }}
             />
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
           </View>
 
           {/* Nút "Tiếp tục" */}
@@ -92,19 +107,24 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   description: {
-    fontSize: 14,
-    color: '#666',
+    fontWeight:'bold',
+    fontSize: 15,
+    color: '#333',
     marginBottom: 20,
     lineHeight: 20,
   },
   input: {
     height: 50,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
-    paddingHorizontal: 15,
-    backgroundColor: '#f9f9f9',
+    borderBottomWidth: 2, // Chỉ có gạch dưới
+    borderBottomColor: '#ccc', // Màu xanh lá
+    paddingHorizontal: 10,
     fontSize: 16,
+    backgroundColor: 'transparent', // Không có nền
+  },
+  errorText: {
+    color: 'red',
+    fontSize: 14,
+    marginTop: 5,
   },
   buttonContainer: {
     padding: 20,
