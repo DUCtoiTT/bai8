@@ -1,4 +1,4 @@
-
+import { NavigationContainer } from '@react-navigation/native';
 import React, { useState } from 'react';
 import {
   StyleSheet,
@@ -10,9 +10,23 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from 'react-native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useNavigation } from '@react-navigation/native';
 
-export default function App() {
+const Stack = createNativeStackNavigator();
+
+
+const HomeScreen = () => {
+  return (
+    <View style={styles.homeContainer}>
+      <Text style={styles.homeText}>Chào mừng bạn đến với Trang chủ!</Text>
+    </View>
+  );
+};
+
+const LoginScreen = ({navigation}) => {
   const [phone, setPhone] = useState('');
   const [error, setError] = useState('');
 
@@ -27,8 +41,12 @@ export default function App() {
       return;
     }
     setError('');
-    console.log('Số điện thoại hợp lệ:', phone);
-    // Xử lý tiếp theo sau khi nhập đúng
+   Alert.alert('Thanh cong','So dien thoai hop le, chuyen sang trang chu',[{
+    text: 'OK',
+    onPress:() => navigation.navigate('Home'),
+   },
+  ]);
+
   };
   return (
     <KeyboardAvoidingView
@@ -71,6 +89,18 @@ export default function App() {
         </View>
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
+  );
+
+}
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator >
+        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }}/>
+        <Stack.Screen name="Home" component={HomeScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
